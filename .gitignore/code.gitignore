@@ -1,0 +1,42 @@
+
+int led1 = D7;  // The on-board LED   
+int led2 = A5;   
+bool sunlight = false;
+int lightPower = 0;
+int P_resitor = A0;
+
+
+void setup () {
+    pinMode(led1, OUTPUT);
+    pinMode(led2, OUTPUT);
+   
+    Particle.variable("lightPower", &lightPower, INT); // passing in a global variable
+}
+void loop(){
+    digitalWrite(led1, HIGH);   
+    digitalWrite(led2, HIGH);   
+    
+    lightPower = analogRead(P_resitor);
+    //
+    if ((P_resitor >=15) and (sunlight == false)){  
+       
+        Particle.publish(String(lightPower), "Read_the_light");  
+        Particle.publish("Sun_is_on", "true");
+        
+        sunlight = true;
+       
+    } else if ((lightPower < 15) and (sunlight == true)){  
+        
+        Particle.publish(String(lightPower), "Read_the_light"); 
+        Particle.publish("Sun_is_off", "true");
+        
+        sunlight = false;
+    }
+    
+    delay(10000);                 
+    digitalWrite(led1, LOW);     
+    digitalWrite(led2, LOW);     
+    delay(10000);  
+}
+  
+
